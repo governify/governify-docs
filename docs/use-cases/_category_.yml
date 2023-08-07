@@ -1,0 +1,6 @@
+position: 2 # Sets this category to the second position in the sidebar
+label: 'Use Cases'
+collapsible: true
+collapsed: true
+customProps:
+  description: This description can be used in the swizzled DocCard

@@ -1,0 +1,8 @@
+className: nested-category
+position: 3 # Sets this category to the second position in the sidebar
+label: 'Collectors'
+collapsible: true
+collapsed: false
+link:
+  type: doc
+  id: intro
