@@ -41,7 +41,7 @@ flowchart LR
 
 ## Services
 
-Appart from the main components, Governify needs some additional services that endow the system with a high configurability and scalability. This way, Governify is able to be adapted to multiple scenarios as stated in the [use cases](/docs/use-cases). To do so, the infrastructures under Governify environment rely on static assets (agreement templates, interface views, dashboard templates...) that are injected in the system at runtime. 
+Appart from the main components, Governify needs some additional services that endow the system with a high configurability and scalability. This way, Governify is able to be adapted to multiple scenarios as stated in the use cases. To do so, the infrastructures under Governify environment rely on static assets (agreement templates, interface views, dashboard templates...) that are injected in the system at runtime. 
 
 To manage this configurability, Governify provides a set of services that are in charge of managing these assets and correctly register them in the system. The following diagram shows the main services that Governify provides.
 

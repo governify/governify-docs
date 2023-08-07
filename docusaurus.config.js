@@ -15,7 +15,7 @@ const config = {
   projectName: 'governify-docs', 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
-  i18n: { defaultLocale: 'en', locales: ['en', 'es'] },
+  i18n: { defaultLocale: 'en', locales: ['en'] },
   scripts: [{ defer: true, src: '/js/external_sidebar_links.js'}],
   presets: [[ '@docusaurus/preset-classic', { 
     docs: { routeBasePath: '/', editUrl: 'https://github.com/governify/governify-docs/edit/main', showLastUpdateAuthor: true, showLastUpdateTime: true },

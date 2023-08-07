@@ -192,7 +192,7 @@ Holds the main information of the SLA terms.
 | guarantees     	| Array[[`GuaranteeObject`](#guaranteeobject)]  	| **Required**      	| Holds the main information of the SLA guarantees.            	|
 | configurations 	| [`ConfigurationsObject`](#configurationsobject)  	| Optional              | Holds the main information of the SLA configurations.        	|
 | quotas         	| Array[[`QuotaObject`](#quotaobject)]          	| Optional          	| Holds the main information of the SLA quotas.           	 	|
-| rates          	| Array[[`RateObject`](rateobject)]             	| Optional          	| Holds the main information of the SLA rates.           	 	|
+| rates          	| Array[[`RateObject`](#rateobject)]             	| Optional          	| Holds the main information of the SLA rates.           	 	|
 
 ##### Example
 
@@ -627,8 +627,6 @@ window:
     period: 'customRules'
     rules: 'DTSTART:20200101T000000Z\nRRULE:FREQ=DAILY;INTERVAL=1;BYHOUR=10---DTSTART:20200101T000000Z\nRRULE:FREQ=DAILY;INTERVAL=1;BYHOUR=22'
 ``` 
-
-You can find more documentation of the period definition [here](/reference-guides/periods).
 
 #### ConfigurationsObject
 Holds the main information of the SLA configurations.

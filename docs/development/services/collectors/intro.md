@@ -33,4 +33,4 @@ Depending on the use case, the required data may be fetched from different type 
 
 * **[Collector Events](/development/services/collectors/collector-events):** Gather data from REST and GraphQL APIs of different platforms such as GitHub, Pivotal Tracker, Heroku, Travis CI, etc.
 
-* **[Computer PPINOT](/development/services/collectors/collector-ppinot):** Gather data from PPINOT models.
+* **[Computer PPINOT](/development/services/collectors/computer-ppinot):** Gather data from PPINOT models.
