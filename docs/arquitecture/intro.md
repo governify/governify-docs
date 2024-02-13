@@ -2,7 +2,6 @@
 title: Architecture
 description: Architecture
 hide_table_of_contents: true
-sidebar_position: 3 # Sets this doc to the third position in the sidebar
 ---
 
 # Architecture
