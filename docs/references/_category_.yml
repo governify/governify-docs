@@ -1,5 +1,5 @@
 className: sidebar-hr # Set this to create a 'category separator'
-position: 6 # Sets this category to the second position in the sidebar
-label: 'ℹ️ About'
+position: 5 # Sets this category to the second position in the sidebar
+label: '📖 Reference'
 collapsible: false
 collapsed: false
