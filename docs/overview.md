@@ -12,6 +12,6 @@ Governify is a service agreement management framework that boosts the service go
 
 ![Governify Overview](/img/about/gov-overview.png) 
 
-The underlying agreeement model ([iAgree](about/iAgree.md)) provides a uniform modelling approach in a wide range of domains: from Service Level Agreements in RESTful services, to Service Objective/Penalties and Rewards in IT Service Support Desks driven by humans, or Best Team Practices in Agile Development Teams. These holistic capabilities allow the definition of integrated metrics, goals and dashboards to create a common govenrance platform to drive the strategy of the organization. 
+The underlying agreeement model ([iAgree](/references/iAgree.md)) provides a uniform modelling approach in a wide range of domains: from Service Level Agreements in RESTful services, to Service Objective/Penalties and Rewards in IT Service Support Desks driven by humans, or Best Team Practices in Agile Development Teams. These holistic capabilities allow the definition of integrated metrics, goals and dashboards to create a common govenrance platform to drive the strategy of the organization. 
 
 Governify provides a native micro-service architecture of RESTful Components that can be easily deployed and operated as containers in the infraestructure at choice.
