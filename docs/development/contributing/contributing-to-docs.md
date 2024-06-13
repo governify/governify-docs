@@ -13,7 +13,7 @@ Thank you for your interest in contributing to the Govenify documentation! Your 
 
 To contribute to Govenify documentation, please follow these steps:
 
-1. **Access the online documentation** at [governify docs](https://docs.governify.io/) or [bluejay docs](https://docs.bluejay.governify.io/).
+1. **Access the online documentation** at [Governify Docs](https://docs.governify.io/) or [Bluejay Docs](https://docs.bluejay.governify.io/). Bluejay is a specific use case of Governify. General documentation should be uploaded to the Governify documentation.
 
 2. **Read the existing documentation** to become familiar with the topics and ensure that your contribution is relevant and helpful.
 
@@ -25,6 +25,7 @@ To contribute to Govenify documentation, please follow these steps:
 
    - When adding images, place them in the `/static/img` directory.
    - When including code, make sure to use appropriate code formatting and specify the language, like this:
+   
    ```txt
       >```js
       >  console.log("hello governify")

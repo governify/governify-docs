@@ -9,6 +9,8 @@ sidebar_position: 1
 
 The development section of Governify focuses on providing detailed information about the various services and tools that make up the platform, extending its functionalities, and contributing to the project.
 
+To develop effectively, it is recommended to do so in the context of a specific use case, such as "Bluejay", which has specific development [documentation](https://docs.bluejay.governify.io).
+
 ## Services
 
 Governify comprises various microservices, each responsible for specific tasks within the system. These microservices work together to ensure the platform functions smoothly and efficiently. This section contains detailed information about each microservice, including its purpose, architecture, endpoints, and configuration.
