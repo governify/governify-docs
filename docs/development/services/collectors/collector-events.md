@@ -247,7 +247,7 @@ The system will replace %GITHUB.REPO_OWNER% with the information extracted from 
 This method was created due to complexity of GraphQL nested objects. It is a custom method in which different steps are sequentially executed to fetch, transform and return data.
 
 This is a metric for obtaining the number of assigned issues, in a column called "Doing" inside a GitHub project, for each member:
-```
+```json
 {
     "metric": {
         "computing": "string",
@@ -317,7 +317,7 @@ The steps are differenciated by its type. These steps types follow a simple patt
 #### Step type: queryGetObject and queryGetObjects
 This steps expect nothing and returns or an object or an array of objects. They do the same but both types are correct for better reading of the DSL.
 
-```
+```json
 {
   "type": "queryGetObject",
   "query":  "{repository(name: \"%PROJECT.github.repository%\", owner: \"%PROJECT.github.repoOwner%\") {projects(first: 1) {nodes {name,columns(first: 10) {nodes {name,cards(first: 100) {totalCount,nodes {column {name},content {... on Issue {url,number,title,createdAt,updatedAt,assignees(first: 10) {nodes {login}}}}}}}}}}}}"                            
@@ -329,7 +329,7 @@ It needs a "query" parametter to be passed containing the graphQL query stringif
 
 #### Step type: objectGetSubObject and objectGetSubObjects
 This steps expect a single object and return an object or an array of objects. They do the same but both types are correct for better reading of the DSL.
-```
+```json
 {
   "type": "objectGetSubObjects",
   "location": "data.repository.projects.nodes.0.columns.nodes"
@@ -344,7 +344,7 @@ This steps expect an array of zero or more objects and return an object or an ar
 A filters array with one or more strings is requried. These strings are equations. The left part contains the attribute location on the different objects to compare and the right part the value the obtained attribute is expected to be.
 
 If the filter is *objectsFilterObject*, a parameter "keep" is expected as many objects can be retrieved from the filter and only one can remain. *first, last, min, max, sum, avg* are the valid options.
-```
+```json
 {
   "type": "objectsFilterObject",
   "filters": [
@@ -355,7 +355,7 @@ If the filter is *objectsFilterObject*, a parameter "keep" is expected as many o
 ```
 
 If the filter is *objectsFilterObjects*, the keep parameter is no longer needed.
-```
+```json
 {
   "type": "objectsFilterObjects",
   "filters": [
@@ -406,3 +406,165 @@ It takes data from GitHub GQL API containing information about the cards (projec
 }
 ```
 As it can be seen it will filter and keep issues whose cards have been moved from a column called "In progress" to a column called "In review". It will also use the from and to  filter the data.
+
+### Test computation endpoint for metrics
+In case that we want to develop or test a metric, we can easily test it without the need of calculating the metrics of the agreement each time. For this, 2 endpoints are used, one to calculate the metric and the other to obtain the computing data (evidence) that follows the following flow:
+
+![Governify Overview](/img/development/services/collector-events/computation-endpoint-diagram.png) 
+
+In this example, we will test an existing metric called "COUNT_INPROGRESSISSUES_MEMBER".
+
+#### Collector deployed in docker
+Once the system is deployed correctly:
+1. Open Postman and create a new tab with the following configuration:
+```json
+{
+    "config": {
+        "scopeManager": "http://host.docker.internal:5700/api/v1/scopes/development"
+    },
+    "metric": { //<-- Metric that will be calculated by the collector
+        "computing": "actual",
+        "element": "number",
+        "event": {
+            "githubGQL": {
+                "custom": {
+                    "type": "graphQL",
+                    "title": "Get issues in progress",
+                    "steps": {
+                        "0": {
+                            "type": "queryGetObject",
+                            "query": "{repository(name: \"%PROJECT.github.repository%\", owner: \"%PROJECT.github.repoOwner%\") {\r\n    projectsV2(first: 5) {\r\n      nodes {\r\n        items(first: 100) {\r\n          nodes {\r\n            content {\r\n              ... on Issue {\r\n                bodyText\r\n                updatedAt\r\n                number\r\n                author {\r\n                  login\r\n                }\r\n                assignees(first: 5  ) {\r\n                    nodes {\r\n                        login\r\n                    }\r\n                }\r\n              }\r\n            }\r\n            fieldValues(first: 100) {\r\n              nodes {\r\n                ... on ProjectV2ItemFieldUserValue {\r\n                    field {\r\n                        ... on ProjectV2Field {\r\n                            name\r\n                        }\r\n                    }\r\n                }\r\n                ... on ProjectV2ItemFieldRepositoryValue {\r\n                  field {\r\n                    ... on ProjectV2Field {\r\n                      name\r\n                    }\r\n                  }\r\n                  repository {\r\n                    nameWithOwner\r\n                  }\r\n                }\r\n                ... on ProjectV2ItemFieldTextValue {\r\n                  text\r\n                  field {\r\n                    ... on ProjectV2Field {\r\n                      name\r\n                    }\r\n                  }\r\n                }\r\n                ... on ProjectV2ItemFieldMilestoneValue {\r\n                    field {\r\n                        ... on ProjectV2Field {\r\n                            name\r\n                        }\r\n                    }\r\n                    milestone {\r\n                        number\r\n                        title \r\n                    }\r\n                }\r\n                ... on ProjectV2ItemFieldSingleSelectValue {\r\n                  name\r\n                  updatedAt\r\n                  creator {\r\n                    login\r\n                  }\r\n                  field {\r\n                    ... on ProjectV2SingleSelectField {\r\n                      name\r\n                    }\r\n                  }\r\n                }\r\n              }\r\n            }\r\n          }\r\n        }\r\n      }\r\n    }\r\n  }\r\n}",
+                            "cache": true
+                        },
+                        "1": {
+                            "type": "objectGetSubObjects",
+                            "location": "data.repository.projectsV2.nodes.0.items.nodes"
+                        },
+                        "2": {
+                            "type": "objectsFilterObjects",
+                            "filters": [
+                                "content.assignees.nodes.*any*.login == '%MEMBER.github.username%'"
+                            ]
+                        },
+                        "3": {
+                            "type": "runScript",
+                            "variables": {},
+                            "script": "module.exports.generic = function getFieldValues(inputData, variables) {\r\n    let result = [];\r\n    for (const issue of inputData) {\r\n        for (const fieldValue of issue.fieldValues.nodes) {\r\n            if (fieldValue.name === 'In Progress') {\r\n                               result.push(issue);\r\n                \r\n            }\r\n        }\r\n    }\r\n    return result;\r\n}"
+                        }
+                    }
+                }
+            }
+        },
+        "scope": {
+            "project": "showcase-GH-governify_bluejay-showcase", //<-- ID of the project that will be tested
+            "class": "showcase", //<-- Class of the project that will be tested
+            "member": "*" //<-- Add this if the metric is calculated for each member
+        },
+        "window": {
+            "type": "static",
+            "period": "hourly", //<-- Choose the period for the calculation (hourly/daily/weekly/biweekly/monthly/bimonthly/annually)
+            "initial": "2022-04-07T02:00:00.000Z", //<-- Set the initial of the period
+            "from": "2022-04-07T02:00:00.000Z", //<-- Set the start of the period
+            "end": "2022-04-07T02:59:59.999Z", //<-- Set the end of the period
+            "timeZone": "America/Los_Angeles" //<-- Set the time zone for the calculation
+        }
+    }
+}
+```
+
+It should look like this:
+
+![Governify Overview](/img/development/services/collector-events/computation-docker.png) 
+
+Now we are ready to start testing our metric.
+
+#### Collector deployed in node
+All we need to setup the development environment for this tutorial is to deploy any of the Governify applications (in this case, we will be using Bluejay). Once the system is deployed:
+1. Stop the container that corresponds to the collector and scope-manager.
+2. Open the collector and scope-manager locally and run ```node index.js``` in order to deploy the collector service and scope-manager locally. It will automatically connect to the docker network. (make sure you have the collector's .env configured correctly)
+3. Open Postman and create a new tab with the following configuration:
+
+```POST localhost:5500/api/v2/computations```
+
+Body --> Raw --> JSON:
+
+```json
+{
+    "config": {
+        "scopeManager": "http://localhost:5700/api/v1/scopes/development"
+    },
+    "metric": { //<-- Metric that will be calculated by the collector
+        "computing": "actual",
+        "element": "number",
+        "event": {
+            "githubGQL": {
+                "custom": {
+                    "type": "graphQL",
+                    "title": "Get issues in progress",
+                    "steps": {
+                        "0": {
+                            "type": "queryGetObject",
+                            "query": "{repository(name: \"%PROJECT.github.repository%\", owner: \"%PROJECT.github.repoOwner%\") {\r\n    projectsV2(first: 5) {\r\n      nodes {\r\n        items(first: 100) {\r\n          nodes {\r\n            content {\r\n              ... on Issue {\r\n                bodyText\r\n                updatedAt\r\n                number\r\n                author {\r\n                  login\r\n                }\r\n                assignees(first: 5  ) {\r\n                    nodes {\r\n                        login\r\n                    }\r\n                }\r\n              }\r\n            }\r\n            fieldValues(first: 100) {\r\n              nodes {\r\n                ... on ProjectV2ItemFieldUserValue {\r\n                    field {\r\n                        ... on ProjectV2Field {\r\n                            name\r\n                        }\r\n                    }\r\n                }\r\n                ... on ProjectV2ItemFieldRepositoryValue {\r\n                  field {\r\n                    ... on ProjectV2Field {\r\n                      name\r\n                    }\r\n                  }\r\n                  repository {\r\n                    nameWithOwner\r\n                  }\r\n                }\r\n                ... on ProjectV2ItemFieldTextValue {\r\n                  text\r\n                  field {\r\n                    ... on ProjectV2Field {\r\n                      name\r\n                    }\r\n                  }\r\n                }\r\n                ... on ProjectV2ItemFieldMilestoneValue {\r\n                    field {\r\n                        ... on ProjectV2Field {\r\n                            name\r\n                        }\r\n                    }\r\n                    milestone {\r\n                        number\r\n                        title \r\n                    }\r\n                }\r\n                ... on ProjectV2ItemFieldSingleSelectValue {\r\n                  name\r\n                  updatedAt\r\n                  creator {\r\n                    login\r\n                  }\r\n                  field {\r\n                    ... on ProjectV2SingleSelectField {\r\n                      name\r\n                    }\r\n                  }\r\n                }\r\n              }\r\n            }\r\n          }\r\n        }\r\n      }\r\n    }\r\n  }\r\n}",
+                            "cache": true
+                        },
+                        "1": {
+                            "type": "objectGetSubObjects",
+                            "location": "data.repository.projectsV2.nodes.0.items.nodes"
+                        },
+                        "2": {
+                            "type": "objectsFilterObjects",
+                            "filters": [
+                                "content.assignees.nodes.*any*.login == '%MEMBER.github.username%'"
+                            ]
+                        },
+                        "3": {
+                            "type": "runScript",
+                            "variables": {},
+                            "script": "module.exports.generic = function getFieldValues(inputData, variables) {\r\n    let result = [];\r\n    for (const issue of inputData) {\r\n        for (const fieldValue of issue.fieldValues.nodes) {\r\n            if (fieldValue.name === 'In Progress') {\r\n                               result.push(issue);\r\n                \r\n            }\r\n        }\r\n    }\r\n    return result;\r\n}"
+                        }
+                    }
+                }
+            }
+        },
+        "scope": {
+            "project": "showcase-GH-governify_bluejay-showcase", //<-- ID of the project that will be tested
+            "class": "showcase", //<-- Class of the project that will be tested
+            "member": "*" //<-- Add this if the metric is calculated for each member
+        },
+        "window": {
+            "type": "static",
+            "period": "hourly", //<-- Choose the period for the calculation (hourly/daily/weekly/biweekly/monthly/bimonthly/annually)
+            "initial": "2022-04-07T02:00:00.000Z", //<-- Set the initial of the period
+            "from": "2022-04-07T02:00:00.000Z", //<-- Set the start of the period
+            "end": "2022-04-07T02:59:59.999Z", //<-- Set the end of the period
+            "timeZone": "America/Los_Angeles" //<-- Set the time zone for the calculation
+        }
+    }
+}
+```
+
+It should look like this:
+
+![Governify Overview](/img/development/services/collector-events/computations-postman.png) 
+
+Now we are ready to start testing our metric.
+
+#### Testing metric
+Now that we have set up our development environment, we can modify our metric as we want. Whenever we want to check what our metric returns, we can follow these simple steps:
+1. Click on the "Send" button in Postman. This will return a response that looks like this:
+```json
+{
+    "code": 200,
+    "message": "OK",
+    "computation": "/api/v2/computations/39a76b982f9e2c87"
+}
+```
+
+2. Click on the computation URL. This will open another Postman tab with a GET to that link.
+3. Click on the "Send" button in that new tab.
+4. You can now check the response from the collector.
+
+![Governify Overview](/img/development/services/collector-events/computation-evidence.png) 
+
+
+_(NOTE: The computations are deleted after you GET them once. If you want to test the metric again, you will need to perform another POST to the computations endpoint)_
