@@ -2,7 +2,7 @@
 title: Examples
 description: Examples
 hide_table_of_contents: false
-sidebar_position: 1 # Sets this doc to the third position in the sidebar
+sidebar_position: 3 # Sets this doc to the third position in the sidebar
 sidebar_class_name: external-link::github.com/governify/governify-examples # Use this format for external links
 ---
 
