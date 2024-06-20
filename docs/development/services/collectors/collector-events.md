@@ -417,6 +417,11 @@ In this example, we will test an existing metric called "COUNT_INPROGRESSISSUES_
 #### Collector deployed in docker
 Once the system is deployed correctly:
 1. Open Postman and create a new tab with the following configuration:
+
+```POST localhost:5500/api/v2/computations```
+
+Body --> Raw --> JSON:
+
 ```json
 {
     "config": {
@@ -476,10 +481,10 @@ It should look like this:
 
 ![Governify Overview](/img/development/services/collector-events/computation-docker.png) 
 
-Now we are ready to start testing our metric.
+Now we are ready to start [testing our metric](/development/services/collectors/collector-events/#testing-metric).
 
 #### Collector deployed in node
-All we need to setup the development environment for this tutorial is to deploy any of the Governify applications (in this case, we will be using Bluejay). Once the system is deployed:
+All we need to setup the development environment for this tutorial is to deploy any of the Governify applications (in this case, we will be using Bluejay). Once the system is deployed with docker:
 1. Stop the container that corresponds to the collector and scope-manager.
 2. Open the collector and scope-manager locally and run ```node index.js``` in order to deploy the collector service and scope-manager locally. It will automatically connect to the docker network. (make sure you have the collector's .env configured correctly)
 3. Open Postman and create a new tab with the following configuration:
@@ -547,7 +552,7 @@ It should look like this:
 
 ![Governify Overview](/img/development/services/collector-events/computations-postman.png) 
 
-Now we are ready to start testing our metric.
+Now we are ready to start [testing our metric](/development/services/collectors/collector-events/#testing-metric).
 
 #### Testing metric
 Now that we have set up our development environment, we can modify our metric as we want. Whenever we want to check what our metric returns, we can follow these simple steps:
