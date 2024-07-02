@@ -170,6 +170,9 @@ All of the above blocks have the alternative _"-notZero"(e.g. time-graph-notZero
     ```
     ![Divider-changer-github](/img/development/services/dashboard/divider-github.png)
 
+:::tip
+The definition of all block types, including their options, can be found in [this file](https://github.com/governify/reporter/blob/main/src/backend/dashboards/blocks/blocksToDashboard.js), which is part of the Reporter service. Each block has a JSON transformation and a piece of code that replaces the various options with the corresponding information from the TPA. You may create your own blocks by adding the appropriate JSON transformations and pieces of code.
+:::
 
 #### Full block Example
 In this section we will see an example of input and output using the block creation option using the bluejay infrastructure so we will make use of the notZero version of the blocks to better represent the data.
