@@ -573,3 +573,9 @@ Now that we have set up our development environment, we can modify our metric as
 
 
 _(NOTE: The computations are deleted after you GET them once. If you want to test the metric again, you will need to perform another POST to the computations endpoint)_
+
+## More information about Collector-Events
+Learn [how to deploy the `collector-events`](https://docs.bluejay.governify.io/development/setup-development-environment/nodejs/collector-events) on your PC with NodeJS to create new functionalities.
+
+Visit the [`collector-events` repository documentation](https://github.com/governify/collector-events?tab=readme-ov-file#governify-events-collector) to learn more about how the `collector-events` works.
+
