@@ -412,7 +412,9 @@ In case that we want to develop or test a metric, we can easily test it without 
 
 ![Governify Overview](/img/development/services/collector-events/computation-endpoint-diagram.png) 
 
-In this example, we will test an existing metric called "COUNT_INPROGRESSISSUES_MEMBER".
+In this example, we will test an existing metric called "COUNT_INPROGRESSISSUES_MEMBER". The test environment to test the computations will be explained step by step below. During the complete process, 2 types of requests are made that you can find in this [postman publication](https://documenter.getpostman.com/view/26480466/2sA3kPoiqZ).
+
+
 
 #### Collector deployed in docker
 Once the system is deployed correctly:
