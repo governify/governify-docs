@@ -412,11 +412,74 @@ In case that we want to develop or test a metric, we can easily test it without 
 
 ![Governify Overview](/img/development/services/collector-events/computation-endpoint-diagram.png) 
 
-In this example, we will test an existing metric called "COUNT_INPROGRESSISSUES_MEMBER". The test environment to test the computations will be explained step by step below. During the complete process, 2 types of requests are made that you can find in this [postman publication](https://documenter.getpostman.com/view/26480466/2sA3kPoiqZ).
+In this example, we will test an existing metric called "COUNT_INPROGRESSISSUES_MEMBER". The test environment to test the computations will be explained step by step below. 
 
+For the example shown below, ensure you meet the [**pre-requirements**](/development/services/collectors/collector-events/#0-pre-requirements) in step 0 before starting the guide.
 
+During the complete process, 2 types of requests are made, depending on the way in which we have the system deployed:
 
-#### Collector deployed in docker
+- [**1A: Collector deployed in docker**](/development/services/collectors/collector-events/#1a-collector-deployed-in-docker)
+- [**1B: Collector deployed in node**](/development/services/collectors/collector-events/#1b-collector-deployed-in-node)
+
+After completing the configuration steps in step 1 of one of the two options, we will proceed to step [**2: Testing metric**](/development/services/collectors/collector-events/#2-testing-metric) where we will execute the POST and GET requests, as shown in the figure above.
+
+#### 0: Pre-requirements
+The only thing you must have configured to follow this guide is the following project in the scope.json which corresponds to this [github repository](https://github.com/governify/bluejay-showcase):
+
+```json
+{
+    "development": [
+        {
+            "classId": "showcase",
+            "identities": [],
+            "credentials": [],
+            "projects": [
+                {
+                    "name": "bluejay-showcase",
+                    "owner": "L2",
+                    "teamId": "08",
+                    "projectId": "showcase-GH-governify_bluejay-showcase",
+                    "notifications": {
+                        "email": ""
+                    },
+                    "credentials": [],
+                    "identities": [
+                        {
+                            "source": "github",
+                            "repository": "bluejay-showcase",
+                            "repoOwner": "governify"
+                        }
+                    ],
+                    "members": [
+                        {
+                            "memberId": "Javi_Fdez",
+                            "identities": [
+                                {
+                                    "source": "github",
+                                    "username": "JaviFdez7"
+                                }
+                            ],
+                            "credentials": []
+                        },
+                        {
+                            "memberId": "Pablo_Fdez",
+                            "identities": [
+                                {
+                                    "source": "github",
+                                    "username": "pafmon"
+                                }
+                            ],
+                            "credentials": []
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+```
+
+#### 1A: Collector deployed in docker
 Once the system is deployed correctly:
 1. Open Postman and create a new tab with the following configuration:
 
@@ -483,9 +546,9 @@ It should look like this:
 
 ![Governify Overview](/img/development/services/collector-events/computation-docker.png) 
 
-Now we are ready to start [testing our metric](/development/services/collectors/collector-events/#testing-metric).
+Now we are ready to start [**testing our metric**](/development/services/collectors/collector-events/#2-testing-metric).
 
-#### Collector deployed in node
+#### 1B: Collector deployed in node
 All we need to setup the development environment for this tutorial is to deploy any of the Governify applications (in this case, we will be using Bluejay). Once the system is deployed with docker:
 1. Stop the container that corresponds to the collector and scope-manager.
 2. Open the collector and scope-manager locally and run ```node index.js``` in order to deploy the collector service and scope-manager locally. It will automatically connect to the docker network. (make sure you have the collector's .env configured correctly)
@@ -554,11 +617,18 @@ It should look like this:
 
 ![Governify Overview](/img/development/services/collector-events/computations-postman.png) 
 
-Now we are ready to start [testing our metric](/development/services/collectors/collector-events/#testing-metric).
+Now we are ready to start [**testing our metric**](/development/services/collectors/collector-events/#2-testing-metric).
 
-#### Testing metric
-Now that we have set up our development environment, we can modify our metric as we want. Whenever we want to check what our metric returns, we can follow these simple steps:
-1. Click on the "Send" button in Postman. This will return a response that looks like this:
+#### 2: Testing metric
+Now that we have set up our development environment, we can modify our metric as we want. Whenever we want to check what our metric returns, we can follow these steps. 
+
+For this example, we will use the requests that you can find in this [postman documentation](https://documenter.getpostman.com/view/26480466/2sA3kPoiqZ).
+
+1. (Optional) Import the Postman documentation of the example, just in case you want to follow along.
+
+2. (Optional) Modify the body of the metric to test different configurations.
+
+3. Click on the "Send" button in Postman. This will return a response that looks like this:
 ```json
 {
     "code": 200,
@@ -567,11 +637,202 @@ Now that we have set up our development environment, we can modify our metric as
 }
 ```
 
-2. Click on the computation URL. This will open another Postman tab with a GET to that link.
-3. Click on the "Send" button in that new tab.
-4. You can now check the response from the collector.
+4. Click on the computation URL. This will open another Postman tab with a GET to that link.
+
+5. Click on the "Send" button in that new tab.
+
+6. You can now check the response from the collector.
 
 ![Governify Overview](/img/development/services/collector-events/computation-evidence.png) 
+
+7. In the output located at the bottom, you can view the result of the collector. If the metric is incorrectly configured, you will be notified of the error, or the evidences array will appear empty. If everything is correct, you will be able to see the evidences and the value of each calculation performed, as shown below:
+
+```json
+{
+    "code": 200,
+    "message": "OK",
+    "computations": [
+        {
+            "scope": {
+                "project": "showcase-GH-governify_bluejay-showcase",
+                "class": "showcase",
+                "member": "Javi_Fdez"
+            },
+            "period": {
+                "from": "2022-04-07T02:00:00.000Z",
+                "to": "2022-04-07T02:59:59.999Z"
+            },
+            "evidences": [
+                {
+                    "content": {
+                        "bodyText": "",
+                        "updatedAt": "2024-05-03T09:35:56Z",
+                        "number": 1,
+                        "author": {
+                            "login": "JaviFdez7"
+                        },
+                        "assignees": {
+                            "nodes": [
+                                {
+                                    "login": "JaviFdez7"
+                                }
+                            ]
+                        }
+                    },
+                    "fieldValues": {
+                        "nodes": [
+                            {
+                                "field": {
+                                    "name": "Assignees"
+                                }
+                            },
+                            {
+                                "field": {
+                                    "name": "Repository"
+                                },
+                                "repository": {
+                                    "nameWithOwner": "governify/bluejay-showcase"
+                                }
+                            },
+                            {
+                                "text": "Task: In progress Issue",
+                                "field": {
+                                    "name": "Title"
+                                }
+                            },
+                            {
+                                "name": "In Progress",
+                                "updatedAt": "2024-04-09T18:41:36Z",
+                                "creator": {
+                                    "login": "JaviFdez7"
+                                },
+                                "field": {
+                                    "name": "Status"
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "content": {
+                        "bodyText": "",
+                        "updatedAt": "2024-05-03T09:35:44Z",
+                        "number": 3,
+                        "author": {
+                            "login": "JaviFdez7"
+                        },
+                        "assignees": {
+                            "nodes": [
+                                {
+                                    "login": "JaviFdez7"
+                                }
+                            ]
+                        }
+                    },
+                    "fieldValues": {
+                        "nodes": [
+                            {
+                                "field": {
+                                    "name": "Assignees"
+                                }
+                            },
+                            {
+                                "field": {
+                                    "name": "Repository"
+                                },
+                                "repository": {
+                                    "nameWithOwner": "governify/bluejay-showcase"
+                                }
+                            },
+                            {
+                                "text": "Task 3: In Progress Issue",
+                                "field": {
+                                    "name": "Title"
+                                }
+                            },
+                            {
+                                "name": "In Progress",
+                                "updatedAt": "2024-04-09T18:42:16Z",
+                                "creator": {
+                                    "login": "JaviFdez7"
+                                },
+                                "field": {
+                                    "name": "Status"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ],
+            "value": 2
+        },
+        {
+            "scope": {
+                "project": "showcase-GH-governify_bluejay-showcase",
+                "class": "showcase",
+                "member": "Pablo_Fdez"
+            },
+            "period": {
+                "from": "2022-04-07T02:00:00.000Z",
+                "to": "2022-04-07T02:59:59.999Z"
+            },
+            "evidences": [
+                {
+                    "content": {
+                        "bodyText": "",
+                        "updatedAt": "2024-04-10T12:48:22Z",
+                        "number": 2,
+                        "author": {
+                            "login": "JaviFdez7"
+                        },
+                        "assignees": {
+                            "nodes": [
+                                {
+                                    "login": "pafmon"
+                                }
+                            ]
+                        }
+                    },
+                    "fieldValues": {
+                        "nodes": [
+                            {
+                                "field": {
+                                    "name": "Assignees"
+                                }
+                            },
+                            {
+                                "field": {
+                                    "name": "Repository"
+                                },
+                                "repository": {
+                                    "nameWithOwner": "governify/bluejay-showcase"
+                                }
+                            },
+                            {
+                                "text": "Task 2: In Progress Issue",
+                                "field": {
+                                    "name": "Title"
+                                }
+                            },
+                            {
+                                "name": "In Progress",
+                                "updatedAt": "2024-04-09T18:41:59Z",
+                                "creator": {
+                                    "login": "JaviFdez7"
+                                },
+                                "field": {
+                                    "name": "Status"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ],
+            "value": 1
+        }
+    ]
+}
+```
 
 
 _(NOTE: The computations are deleted after you GET them once. If you want to test the metric again, you will need to perform another POST to the computations endpoint)_
