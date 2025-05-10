@@ -1,0 +1,4 @@
+position: 2 # Sets this category to the second position in the sidebar
+label: 'Tooling'
+collapsible: true
+collapsed: true

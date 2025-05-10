@@ -1,0 +1,4 @@
+position: 1 # Sets this category to the second position in the sidebar
+label: 'Services'
+collapsible: true
+collapsed: true
