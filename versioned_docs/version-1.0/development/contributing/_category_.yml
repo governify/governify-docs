@@ -1,0 +1,4 @@
+position: 4 # Sets this category to the second position in the sidebar
+label: 'Contributing'
+collapsible: true
+collapsed: true
