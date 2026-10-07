@@ -397,9 +397,9 @@ Here, information about the members can be included to compare for example, the 
 
 This step expects anything and is passed in to a function exported as generic. It's expected to return a response in the form of an object/array or another kind in case it is compatible with the metric.
 
-To this date it can receive two parametters:
+To date, it can receive two parameters:
 
-- `script`: It is a function exported as generic and receives two inputs: the data being filtered/obtained from the steps executed before it and an object containing variables to generalize the script and modify different filters/conditions inside the script. It must return the processed data in order to move to the next pipeline or to be returned. This script has to be [scaped](https://www.freeformatter.com/json-escape.html#ad-output) in order to fit in the TPA as a JSON.
+- `script`: It is a function exported as generic and receives two inputs: the data being filtered/obtained from the steps executed before it and an object containing variables to generalize the script and modify different filters/conditions inside the script. It must return the processed data in order to move to the next pipeline or to be returned. The function text must be [escaped for a JSON string](https://jsonviewertool.com/json-escape) before it is added to the TPA JSON. The linked tool returns the escaped contents without surrounding quotes, so keep the property's quotes around the result.
 - `variables`: This is the object passed to the script containing the variabilization. The collector will also add to the object two keys (from, to) containing the window for filtering the information.
 
 This is an example of a script without being scaped:
